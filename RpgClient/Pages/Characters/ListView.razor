@@ -1,0 +1,101 @@
+﻿@page "/characters"
+@using RpgApi.Domain.Models
+@using RpgClient.Data
+@inject ApiCaller apiCaller
+
+<h3>Characters</h3>
+
+<div>
+    <h3>Filter</h3>
+    <label for="playerFilter">Player Name: </label>
+    <select class="custom-select" @onchange="Filter" name="playerFilter" id="playerFilter">
+        <option>--Select Player--</option>
+        @foreach (var player in PlayerNames)
+        {
+            <option value="@player">@player</option>
+        }
+    </select>
+</div>
+
+@if (CharactersCollection.Count() == 0 && loading)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (!string.IsNullOrEmpty(selectedFilter))
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Player Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var character in FilteredCharacters)
+        {
+            <tr>
+                <td>@character.Id</td>
+                <td>@character.CharacterDetail.Name</td>
+                <td>@character.CharacterDetail.PlayerName</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Player Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var character in CharactersCollection)
+        {
+            <tr>
+                <td>
+                    <a href="/character/@character.Id/view">@character.CharacterDetail.Name</a>
+                </td>
+                <td>@character.CharacterDetail.PlayerName</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    IEnumerable<Character> CharactersCollection = new List<Character>();
+
+    List<string> PlayerNames = new List<string>();
+    bool loading = true;
+
+    string selectedFilter;
+    IEnumerable<Character> FilteredCharacters = new List<Character>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        CharactersCollection = await apiCaller.CallApiGet<IEnumerable<Character>>("/api/character").ConfigureAwait(false);
+        CharactersCollection = CharactersCollection.OrderBy(c => c.Id);
+        PlayerNames = CharactersCollection.Select(s => s.CharacterDetail.PlayerName).Distinct().ToList();
+        loading = false;
+    }
+
+    void Filter(ChangeEventArgs e)
+    {
+        selectedFilter = e.Value.ToString();
+        if (selectedFilter.Contains("--") || string.IsNullOrEmpty(selectedFilter))
+        {
+            FilteredCharacters = CharactersCollection;
+        }
+        else
+        {
+            FilteredCharacters = CharactersCollection.Where(s => s.CharacterDetail.PlayerName == selectedFilter);
+        }
+    }
+
+}

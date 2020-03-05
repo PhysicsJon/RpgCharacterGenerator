@@ -1,0 +1,28 @@
+﻿<div class="card text-center border-dark">
+    <div class="card-body">
+        <p class="card-title">
+            <strong>@Name</strong>
+        </p>
+        <p class="card-text">@Value</p>
+        <p class="card-text">
+            <em>@GetBonus(Value)</em>
+        </p>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int Value { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
+
+    string GetBonus(int value)
+    {
+        var calculated = (value - 10) / 2;
+
+        return calculated > 0 ? "+" + calculated : calculated.ToString();
+    }
+
+}

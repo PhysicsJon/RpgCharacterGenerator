@@ -1,0 +1,43 @@
+﻿@page "/character/{Id:int}/view"
+@using RpgApi.Domain.Models
+@using RpgClient.Data
+@using RpgClient.Pages.Attributes;
+@inject ApiCaller ApiCaller
+
+@if (Character is null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <div class="container">
+        <h3>ViewCharacter</h3>
+        <div class="row">
+            <div class="col">
+                <h4>Character Name: @Character.CharacterDetail.Name</h4>
+            </div>
+            <div class="col">
+                <h5>Player Name: @Character.CharacterDetail.PlayerName</h5>
+            </div>
+        </div>
+        <div class="row">
+            <StatBlocks Attributes="@Character.Attributes"/>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    public Character Character { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Character = await ApiCaller.CallApiGet<Character>($"/api/character/{Id}");
+    }
+
+}

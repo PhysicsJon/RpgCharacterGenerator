@@ -1,0 +1,26 @@
+﻿@using RpgApi.Domain.Models
+<div class="col">
+    <StatBlock Value="@Attributes.Strength" Name="Str"/>
+</div>
+<div class="col">
+    <StatBlock Value="@Attributes.Dexterity" Name="Dex"/>
+</div>
+<div class="col">
+    <StatBlock Value="@Attributes.Constitution" Name="Con"/>
+</div>
+<div class="col">
+    <StatBlock Value="@Attributes.Intelligence" Name="Int"/>
+</div>
+<div class="col">
+    <StatBlock Value="@Attributes.Wisdom" Name="Wis"/>
+</div>
+<div class="col">
+    <StatBlock Value="@Attributes.Charisma" Name="Cha"/>
+</div>
+
+@code {
+
+    [Parameter]
+    public Attributes Attributes { get; set; }
+
+}
