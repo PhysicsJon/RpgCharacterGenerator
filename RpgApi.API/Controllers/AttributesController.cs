@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using RpgApi.Domain.Models;
 using RpgApi.Infrastructure.Interfaces;
 
@@ -8,25 +9,26 @@ namespace RpgApi.API.Controllers
     [ApiController]
     public class AttributesController : ControllerBase
     {
-        private readonly IReadUpdateService<Attributes, int> _service;
+        private readonly IReadUpdateServiceAsync<Attributes, int> _serviceAsync;
 
-        public AttributesController(IReadUpdateService<Attributes, int> service)
+        public AttributesController(IReadUpdateServiceAsync<Attributes, int> serviceAsync)
         {
-            _service = service;
+            _serviceAsync = serviceAsync;
         }
 
         // GET: api/Attributes/5
         [HttpGet]
-        public Attributes Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return _service.GetByCharacterId(id);
+            return Ok(await _serviceAsync.GetByCharacterIdAsync(id).ConfigureAwait(false));
         }
 
         // PUT: api/Attributes/5
         [HttpPut]
-        public void Put(int id, [FromBody] Attributes attributes)
+        public async Task<IActionResult> Put(int id, [FromBody] Attributes attributes)
         {
-            _service.Update(id, attributes);
+            await _serviceAsync.UpdateAsync(id, attributes).ConfigureAwait(false);
+            return NoContent();
         }
     }
 }

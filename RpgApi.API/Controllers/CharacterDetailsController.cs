@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using RpgApi.Domain.Models;
 using RpgApi.Infrastructure.Interfaces;
 
@@ -9,25 +10,26 @@ namespace RpgApi.API.Controllers
     [Route("api/character/{characterId}/[controller]")]
     public class CharacterDetailsController : ControllerBase
     {
-        private readonly IReadUpdateService<CharacterDetail, int> _service;
+        private readonly IReadUpdateServiceAsync<CharacterDetail, int> _serviceAsync;
 
-        public CharacterDetailsController(IReadUpdateService<CharacterDetail, int> service)
+        public CharacterDetailsController(IReadUpdateServiceAsync<CharacterDetail, int> serviceAsync)
         {
-            _service = service;
+            _serviceAsync = serviceAsync;
         }
 
         // GET api/<controller>/5
         [HttpGet]
-        public CharacterDetail Get(int characterId)
+        public async Task<IActionResult> Get(int characterId)
         {
-            return _service.GetByCharacterId(characterId);
+            return Ok(await _serviceAsync.GetByCharacterIdAsync(characterId).ConfigureAwait(false));
         }
 
         // PUT api/<controller>/5
         [HttpPut]
-        public void Put(int characterId, [FromBody] CharacterDetail detail)
+        public async Task<IActionResult> Put(int characterId, [FromBody] CharacterDetail detail)
         {
-            _service.Update(characterId, detail);
+            await _serviceAsync.UpdateAsync(characterId, detail).ConfigureAwait(false);
+            return NoContent();
         }
     }
 }

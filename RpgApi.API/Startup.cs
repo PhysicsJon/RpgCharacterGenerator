@@ -27,9 +27,9 @@ namespace RpgApi.API
         {
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
             services.AddTransient<IConnection, Connection>();
-            services.AddTransient<ICrudService<Character, int>, CharacterService>();
-            services.AddTransient<IReadUpdateService<CharacterDetail, int>, CharacterDetailService>();
-            services.AddTransient<IReadUpdateService<Attributes, int>, AttributesService>();
+            services.AddTransient<ICrudServiceAsync<Character, int>, CharacterServiceAsync>();
+            services.AddTransient<IReadUpdateServiceAsync<CharacterDetail, int>, CharacterDetailServiceAsync>();
+            services.AddTransient<IReadUpdateServiceAsync<Attributes, int>, AttributesServiceAsync>();
 
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "DbTest", Version = "V1"}); });
         }
