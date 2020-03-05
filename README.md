@@ -12,4 +12,4 @@ Dotnet Core 3.1 Blazor (server side)
 
 
 #### Note
-This character generator is not licenced by Wizards of the Coast.
+This character generator is not licensed by Wizards of the Coast.
