@@ -18,16 +18,16 @@ namespace RpgApi.API.Controllers
 
         // GET: api/Attributes/5
         [HttpGet]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int characterId)
         {
-            return Ok(await _serviceAsync.GetByCharacterIdAsync(id).ConfigureAwait(false));
+            return Ok(await _serviceAsync.GetByCharacterIdAsync(characterId).ConfigureAwait(false));
         }
 
         // PUT: api/Attributes/5
         [HttpPut]
-        public async Task<IActionResult> Put(int id, [FromBody] Attributes attributes)
+        public async Task<IActionResult> Put(int characterId, [FromBody] Attributes attributes)
         {
-            await _serviceAsync.UpdateAsync(id, attributes).ConfigureAwait(false);
+            await _serviceAsync.UpdateAsync(characterId, attributes).ConfigureAwait(false);
             return NoContent();
         }
     }

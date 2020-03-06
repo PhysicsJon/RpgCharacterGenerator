@@ -8,23 +8,33 @@
 <form @onsubmit="Submit">
     <div class="form-group">
         <label for="characterName">Character Name</label>
-        <input class="form-control" id="characterName" @bind="Character.CharacterDetail.Name" />
+        <input class="form-control" id="characterName" @bind="_characterName" />
     </div>
     <div class="form-group">
         <label for="playerName">Player Name</label>
-        <input class="form-control" id="playerName" @bind="Character.CharacterDetail.PlayerName" />
+        <input class="form-control" id="playerName" @bind="_playerName" />
     </div>
     <button type="submit" class="btn btn-primary">Save <span class="oi oi-chevron-right" aria-hidden="true"></span></button>
 </form>
 
 @code {
-    public Character Character = new Character { CharacterDetail = new CharacterDetail(), Attributes = new Attributes() };
+    public Character Character = new Character
+    {
+        CharacterDetail = new CharacterDetail(), 
+        Attributes = new Attributes()
+    };
+
+    string _characterName = string.Empty;
+    string _playerName = string.Empty;
 
     string _className = "";
     string _message = "";
 
     async Task Submit()
     {
+        Character.CharacterDetail.Name = _characterName;
+        Character.CharacterDetail.PlayerName = _playerName;
+
         var result = await apiCaller.CallApiPost("/api/character", Character);
 
         _className = result is null ? "alert-danger" : "alert-success";
