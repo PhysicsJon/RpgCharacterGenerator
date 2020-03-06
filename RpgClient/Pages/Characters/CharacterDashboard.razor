@@ -1,0 +1,34 @@
+﻿@page "/character/{Id:int}"
+@using RpgApi.Domain.Models
+@using RpgClient.Data
+@inject ApiCaller ApiCaller
+
+@if (Character is null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <h1>@Character.CharacterDetail.Name</h1>
+    <h2>@Character.CharacterDetail.PlayerName</h2>
+
+    <a href="/character/@Id/view" class="btn btn-lg btn-secondary">View Full Sheet</a>
+
+    <div class="list-group">
+
+    </div>
+}
+    @code {
+[Parameter]
+    public int Id { get; set; }
+
+    public Character Character { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Character = await ApiCaller.CallApiGet<Character>($"/api/character/{Id}");
+    }
+
+    }

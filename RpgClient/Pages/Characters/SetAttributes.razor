@@ -1,0 +1,91 @@
+﻿@page "/newcharacter/{Id:int}"
+@using RpgApi.Domain.Models
+@using RpgClient.Data
+@inject ApiCaller ApiCaller
+@inject NavigationManager NavManager
+
+<input type="checkbox" class="form-check" checked="@_standardStats" @onchange="CheckboxChecked" />
+
+
+<ul>
+    @foreach (var stat in _availableStats)
+    {
+        <li>@stat</li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public Character Character { get; set; }
+
+    bool _standardStats = false;
+    readonly List<int> _defaultStats = new List<int>()
+    {
+        15, 14, 13, 12, 10, 8
+    };
+
+    List<int> _generatedStats;
+    List<int> _availableStats = new List<int>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Character = await ApiCaller.CallApiGet<Character>($"/api/character/{Id}");
+        ClearStats();
+        _generatedStats = GenerateStats();
+        GetNewStats();
+        base.OnInitialized();
+    }
+
+    void UpdateStat(string stat, int value)
+    {
+        var propertyInfo = Character.Attributes.GetType().GetProperty(stat);
+        if(propertyInfo != null)
+            propertyInfo.SetValue(Character.Attributes, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+    }
+
+    void CheckboxChecked()
+    {
+        _standardStats = !_standardStats;
+        GetNewStats();
+    }
+
+    static List<int> GenerateStats()
+    {
+        var newStats = new List<int>();
+        var rand = new Random();
+
+        for (var i = 0; i < 7; i++)
+        {
+            newStats.Add(RollValue(rand));
+        }
+        return newStats.OrderByDescending(s => s).ToList();
+    }
+
+    static int RollValue(Random rand)
+    {
+        var rolls = new List<int>();
+        for (var j = 0; j < 4; j++)
+        {
+            rolls.Add(rand.Next(1, 7));
+        }
+        rolls.Remove(rolls.Min());
+        return rolls.Sum();
+    }
+
+    void ClearStats()
+    {
+        UpdateStat(nameof(Character.Attributes.Strength), 0);
+        UpdateStat(nameof(Character.Attributes.Dexterity), 0);
+        UpdateStat(nameof(Character.Attributes.Constitution), 0);
+        UpdateStat(nameof(Character.Attributes.Intelligence), 0);
+        UpdateStat(nameof(Character.Attributes.Wisdom), 0);
+        UpdateStat(nameof(Character.Attributes.Charisma), 0);
+    }
+
+    void GetNewStats()
+    {
+        _availableStats = _standardStats ? _defaultStats : _generatedStats;
+    }
+}

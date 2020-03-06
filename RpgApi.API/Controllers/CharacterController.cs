@@ -36,10 +36,11 @@ namespace RpgApi.API.Controllers
 
         // POST: api/Character
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Post([FromBody] Character character)
         {
-            return Created(new Uri("/api/Character"), await _serviceAsync.Create(character).ConfigureAwait(false));
+            var characterResult = await _serviceAsync.Create(character).ConfigureAwait(false);
+            return Ok(characterResult);
         }
 
         // DELETE: api/ApiWithActions/5

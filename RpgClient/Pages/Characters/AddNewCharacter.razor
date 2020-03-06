@@ -2,32 +2,37 @@
 @using RpgApi.Domain.Models
 @using RpgClient.Data
 @inject ApiCaller apiCaller
+@inject NavigationManager NavManager
 
 <h3>AddNewCharacter</h3>
 <form @onsubmit="Submit">
     <div class="form-group">
         <label for="characterName">Character Name</label>
-        <input class="form-control" id="characterName" @bind="Character.CharacterDetail.Name"/>
+        <input class="form-control" id="characterName" @bind="Character.CharacterDetail.Name" />
     </div>
     <div class="form-group">
         <label for="playerName">Player Name</label>
-        <input class="form-control" id="playerName" @bind="Character.CharacterDetail.PlayerName"/>
+        <input class="form-control" id="playerName" @bind="Character.CharacterDetail.PlayerName" />
     </div>
     <button type="submit" class="btn btn-primary">Save <span class="oi oi-chevron-right" aria-hidden="true"></span></button>
 </form>
 
 @code {
-    public Character Character = new Character {CharacterDetail = new CharacterDetail(), Attributes = new Attributes()};
+    public Character Character = new Character { CharacterDetail = new CharacterDetail(), Attributes = new Attributes() };
 
-    string ClassName = "";
-    string Message = "";
+    string _className = "";
+    string _message = "";
 
     async Task Submit()
     {
         var result = await apiCaller.CallApiPost("/api/character", Character);
 
-        ClassName = result is null ? "alert-danger" : "alert-success";
-        Message = result is null ? "Failed to save new character" : "Success!";
-    }
+        _className = result is null ? "alert-danger" : "alert-success";
+        _message = result is null ? "Failed to save new character" : "Success!";
 
+        if (result != null)
+        {
+            NavManager.NavigateTo($"/character/{result.Id}");
+        }
+    }
 }
